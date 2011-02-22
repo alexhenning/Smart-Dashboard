@@ -11,11 +11,11 @@ import java.util.List;
  */
 public class Record implements java.io.Serializable {
 
-    private final String m_name;
-    private int m_id;
-    private final Types.Type m_type;
-    private transient Object m_value;
-    private final List<IStateUpdatable> m_receivers = new ArrayList<IStateUpdatable>();
+    protected final String m_name;
+    protected int m_id;
+    protected final Types.Type m_type;
+    protected transient Object m_value;
+    protected final List<IStateUpdatable> m_receivers = new ArrayList<IStateUpdatable>();
 
     public Record(String name, int id, Type type) {
         m_name = name;

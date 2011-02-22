@@ -14,6 +14,7 @@ import edu.wpi.first.smartdashboard.gui.elements.VideoBox;
 import edu.wpi.first.smartdashboard.gui.layout.LayoutAllocator;
 import edu.wpi.first.smartdashboard.gui.layout.LayoutAllocator.LayoutAllocation;
 import edu.wpi.first.smartdashboard.main;
+import edu.wpi.first.smartdashboard.state.RandomRecord;
 import edu.wpi.first.smartdashboard.types.Types;
 import edu.wpi.first.smartdashboard.util.StatefulDisplayElement;
 import edu.wpi.first.smartdashboard.util.IStateListener;
@@ -163,8 +164,22 @@ public class MainWindow extends JFrame implements IStateListener {
         });
         viewMenu.add(snapToGridChckbox);
 
+	JMenu testMenu = new JMenu("Test");
+	testMenu.addMenuListener(disableGlassPaneOnMenu);
+	
+	JMenuItem addWidgetMenu = new JMenuItem("Add Widget");
+	addWidgetMenu.addActionListener(new ActionListener() {
+		
+		public void actionPerformed(ActionEvent ae) {
+		    System.out.println("Creating widget...");
+		    newField(new RandomRecord("Test", Types.Type.BOOLEAN));
+		}
+	    });
+	testMenu.add(addWidgetMenu);
+
 	customMenuBar.add(fileMenu);
         customMenuBar.add(viewMenu);
+	customMenuBar.add(testMenu);
 	return customMenuBar;
     }
 
