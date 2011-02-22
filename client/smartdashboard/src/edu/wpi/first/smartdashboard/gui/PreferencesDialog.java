@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.NumberFormat;
 
 import javax.swing.JButton;
@@ -12,6 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,14 +26,21 @@ public class PreferencesDialog extends JDialog {
     JCheckBox chckbxShowCameraVideo;
     JCheckBox chckbxDebugVideoErrors;
     JFormattedTextField fFieldCameraVideoTeamNumber;
+    JCheckBox chckbxLogToCSV;
+    JButton btnChooseCSVFilePath;
+    JFileChooser csvFilePathChooser;
+    String csvFilePath;
+    
     /**
      * Create the dialog.
      */
     public PreferencesDialog(JFrame frame) {
 	
 	super(frame, true);
+        csvFilePathChooser = new JFileChooser();
+        csvFilePath = null;
 
-	setBounds(100, 100, 450, 300);
+	setBounds(100, 100, 550, 300);
 	getContentPane().setLayout(new BorderLayout());
 	getContentPane().add(contentPanel, BorderLayout.NORTH);
 	contentPanel.setLayout(new BorderLayout());
@@ -74,7 +83,30 @@ public class PreferencesDialog extends JDialog {
 	    labelPanel.add(debugVideoErrorsLabel);
             inputPanel.add(chckbxDebugVideoErrors);
 	}
+        {
+	    chckbxLogToCSV = new JCheckBox();
+            JLabel logToCSVLabel = new JLabel("Enable logging to CSV");
+            logToCSVLabel.setLabelFor(chckbxLogToCSV);
+            labelPanel.add(logToCSVLabel);
+	    inputPanel.add(chckbxLogToCSV);
+	}
+        {
+            btnChooseCSVFilePath = new JButton("Browse");
 
+            btnChooseCSVFilePath.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    int retCode = csvFilePathChooser.showOpenDialog(PreferencesDialog.this);
+
+                    if(retCode == JFileChooser.APPROVE_OPTION) {
+                        csvFilePath = csvFilePathChooser.getSelectedFile().getAbsolutePath();
+                    }
+                }
+            });
+            JLabel chooseCSVFilePathLabel = new JLabel("Choose a CSV file path");
+            chooseCSVFilePathLabel.setLabelFor(btnChooseCSVFilePath);
+            labelPanel.add(chooseCSVFilePathLabel);
+            inputPanel.add(btnChooseCSVFilePath);
+        }
         {
             contentPanel.add(labelPanel, BorderLayout.CENTER);
             contentPanel.add(inputPanel, BorderLayout.LINE_END);
@@ -92,7 +124,7 @@ public class PreferencesDialog extends JDialog {
 		    public void actionPerformed(ActionEvent ae) {
                         if(chckbxShowCameraVideo.isSelected() &&
                            ((Number) fFieldCameraVideoTeamNumber.getValue()).intValue() < 1) {
-                            JOptionPane.showMessageDialog(rootPane,
+                            JOptionPane.showMessageDialog(PreferencesDialog.this,
                                                           "A valid team number (greater than zero)"
                                                           + " must be provided when showing camera video.",
                                                           "Invalid Team Number",
@@ -101,11 +133,24 @@ public class PreferencesDialog extends JDialog {
                             return;
                         }
 
+                        if(chckbxLogToCSV.isSelected() &&
+                           csvFilePath == null) {
+                           JOptionPane.showMessageDialog(PreferencesDialog.this,
+                                                          "Please select a target CSV file"
+                                                          + " before continuing.",
+                                                          "CSV File Not Specified",
+                                                          JOptionPane.ERROR_MESSAGE);
+                           return;
+                        }
+
                         final DashboardPrefs prefs = DashboardPrefs.getInstance();
 			//prefs.setAutoCreate(chckbxAutocreateDashboardUi.isSelected());
                         prefs.setCameraVideoTeamNumber(((Number) fFieldCameraVideoTeamNumber.getValue()).intValue());
 			prefs.setShowCameraVideo(chckbxShowCameraVideo.isSelected());
                         prefs.setDebugVideoErrors(chckbxDebugVideoErrors.isSelected());
+                        prefs.setLogToCSVEnabled(chckbxLogToCSV.isSelected());
+                        prefs.setLogToCSVFilePath(csvFilePath);
+                        
 			PreferencesDialog.this.setVisible(false);
 		    }
 		});
@@ -130,5 +175,10 @@ public class PreferencesDialog extends JDialog {
         chckbxShowCameraVideo.setSelected(prefs.getShowCameraVideo());
         fFieldCameraVideoTeamNumber.setValue(prefs.getCameraVideoTeamNumber());
         chckbxDebugVideoErrors.setSelected(prefs.getDebugVideoErrors());
+        chckbxLogToCSV.setSelected(prefs.getLogToCSVEnabled());
+        csvFilePath = prefs.getLogToCSVFilePath();
+
+        if(csvFilePath != null)
+            csvFilePathChooser.setSelectedFile(new File(csvFilePath));
     }
 }

@@ -28,7 +28,7 @@ public abstract class DisplayElement extends JPanel {
                     oldLa.deallocate();
 
                     // Try to re-allocate the same location with the new size
-                    LayoutAllocation newLa = LayoutAllocator.allocate(oldLa.point, 
+                    LayoutAllocation newLa = LayoutAllocator.allocate(thisDisplayElement.getLocation(),
                                                                       thisDisplayElement.getWidth(),
                                                                       thisDisplayElement.getHeight());
 

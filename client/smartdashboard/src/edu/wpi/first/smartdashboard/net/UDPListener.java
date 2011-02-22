@@ -49,13 +49,9 @@ public class UDPListener {
             dinput.skip(m_updateNumOffset);
             currentUpdateNum = dinput.readUnsignedByte();
 
-            // Skip highest 8 bits of 32-bit length
-            dinput.skip(1);
-
             length = dinput.readUnsignedShort();
-            length = (length << 8) & 0xFFFFFF;
-            length += dinput.readUnsignedByte();
-            length &= 0xFFFFFF;
+            length = (length << 16);
+            length += dinput.readUnsignedShort();
 
             if(length < 1)
                 // Drop the packet

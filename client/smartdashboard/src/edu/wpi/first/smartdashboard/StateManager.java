@@ -87,7 +87,9 @@ public class StateManager extends Thread {
                 Integer id = (Integer) data.get(AnnouncementReader.ID_INDEX);
                 Types.Type type = (Types.Type) data.get(AnnouncementReader.TYPE_INDEX);
 
-                m_state.register(name, id, type, m_listeners);
+                synchronized(m_listeners) {
+                    m_state.register(name, id, type, m_listeners);
+                }
                 break;
 
             case PacketReader.UPDATE:
@@ -125,7 +127,20 @@ public class StateManager extends Thread {
      * @param l The IStateListener to notify.
      */
     public void registerForAnnouncements(IStateListener l) {
-        m_listeners.add(l);
+        synchronized (m_listeners) {
+            m_listeners.add(l);
+        }
+    }
+
+    /**
+     * Unregisters the given IStateListener such that it is no longer notified
+     * of new field announcements.
+     * @param l The IStateListener to unregister.
+     */
+    public void unregisterForAnnouncements(IStateListener l) {
+        synchronized (m_listeners) {
+            m_listeners.remove(l);
+        }
     }
 
     /**
@@ -148,7 +163,7 @@ public class StateManager extends Thread {
     }
 
     /**
-     * Writes this object's and any containted objects' important state
+     * Writes this object's and any contained objects' important state
      * information to the given ObjectOutputStream.
      * @param objOut The stream to write to.
      * @throws IOException

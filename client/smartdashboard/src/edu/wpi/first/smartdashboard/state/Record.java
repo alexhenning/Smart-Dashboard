@@ -12,7 +12,7 @@ import java.util.List;
 public class Record implements java.io.Serializable {
 
     private final String m_name;
-    private final int m_id;
+    private int m_id;
     private final Types.Type m_type;
     private transient Object m_value;
     private final List<IStateUpdatable> m_receivers = new ArrayList<IStateUpdatable>();
@@ -37,6 +37,14 @@ public class Record implements java.io.Serializable {
      */
     public synchronized int getId() {
         return m_id;
+    }
+
+    /**
+     * Sets the int ID of this field
+     * @param id The int ID of this field
+     */
+    public synchronized void setId(int id) {
+        m_id = id;
     }
 
     /**

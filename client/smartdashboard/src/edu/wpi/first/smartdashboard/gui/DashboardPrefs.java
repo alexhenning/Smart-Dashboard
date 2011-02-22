@@ -22,6 +22,8 @@ public class DashboardPrefs {
     public static final String X_KEY = "X";
     public static final String Y_KEY = "Y";
     public static final String SNAPTOGRID_KEY = "snapToGrid";
+    public static final String LOGTOCSV_ENABLE_KEY = "logToCSVEnable";
+    public static final String LOGTOCSV_FILEPATH_KEY = "logToCSVFilePath";
     
     Preferences node;
     private static DashboardPrefs instance = null;
@@ -107,6 +109,23 @@ public class DashboardPrefs {
 
     public boolean getSnapToGrid() {
         return node.getBoolean(SNAPTOGRID_KEY, false);
+    }
+
+    public boolean getLogToCSVEnabled() {
+        return node.getBoolean(LOGTOCSV_ENABLE_KEY, false);
+    }
+
+    public void setLogToCSVEnabled(boolean value) {
+        node.putBoolean(LOGTOCSV_ENABLE_KEY, value);
+    }
+
+    public String getLogToCSVFilePath() {
+        return node.get(LOGTOCSV_FILEPATH_KEY, null);
+    }
+
+    public void setLogToCSVFilePath(String value) {
+        if(value != null)
+            node.put(LOGTOCSV_FILEPATH_KEY, value);
     }
 
     public void addPreferenceChangeListener(PreferenceChangeListener pcl) {

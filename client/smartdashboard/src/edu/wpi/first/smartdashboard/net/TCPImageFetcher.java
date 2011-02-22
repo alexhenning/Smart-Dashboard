@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
  */
 public class TCPImageFetcher {
     public static final int MAX_IMG_SIZE_BYTES = 500000;
+    public static final int READ_TIMEOUT_MS = 3000;
     public static final int VIDEO_TO_PC_PORT = 1180;
     private Socket m_sock = null;
     private InputStream m_sockistream = null;
@@ -50,6 +51,7 @@ public class TCPImageFetcher {
      */
     private void init() throws IOException {
         m_sock = new Socket(InetAddress.getByAddress(m_address), VIDEO_TO_PC_PORT);
+        m_sock.setSoTimeout(READ_TIMEOUT_MS);
         m_sockistream = m_sock.getInputStream();
         m_daistream = new DataInputStream(m_sockistream);
         m_initialized = true;

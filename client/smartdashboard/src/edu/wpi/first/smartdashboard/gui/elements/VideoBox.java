@@ -18,14 +18,17 @@ import javax.swing.JLabel;
  * @author pmalmsten
  */
 public class VideoBox extends DisplayElement implements IImageReceiver {
-    Image m_img = null;
+    transient Image m_img = null;
     JLabel statusLabel = new JLabel("Waiting for video...");
     Dimension m_oldSize = null;
     boolean waitingForVideo = true;
 
+    public VideoBox() {
+        setPreferredSize(new Dimension(320, 240));
+    }
+    
     public void init() {
         setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(320, 240));
         setBackground(Color.black);
         add(statusLabel, BorderLayout.NORTH);
         statusLabel.setForeground(Color.white);

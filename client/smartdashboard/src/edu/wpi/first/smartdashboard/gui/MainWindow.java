@@ -5,6 +5,7 @@ import edu.wpi.first.smartdashboard.gui.DisplayElementRegistry.NoElementsRegiste
 import edu.wpi.first.smartdashboard.gui.elements.BooleanBox;
 import edu.wpi.first.smartdashboard.gui.elements.Compass;
 import edu.wpi.first.smartdashboard.gui.elements.FormattedField;
+import edu.wpi.first.smartdashboard.gui.elements.LinePlot;
 import edu.wpi.first.smartdashboard.gui.elements.ProgressBar;
 import edu.wpi.first.smartdashboard.gui.elements.SimpleDial;
 import edu.wpi.first.smartdashboard.state.Record;
@@ -12,6 +13,7 @@ import edu.wpi.first.smartdashboard.gui.elements.TextBox;
 import edu.wpi.first.smartdashboard.gui.elements.VideoBox;
 import edu.wpi.first.smartdashboard.gui.layout.LayoutAllocator;
 import edu.wpi.first.smartdashboard.gui.layout.LayoutAllocator.LayoutAllocation;
+import edu.wpi.first.smartdashboard.main;
 import edu.wpi.first.smartdashboard.types.Types;
 import edu.wpi.first.smartdashboard.util.StatefulDisplayElement;
 import edu.wpi.first.smartdashboard.util.IStateListener;
@@ -60,6 +62,7 @@ import javax.swing.event.PopupMenuListener;
  * @author pmalmsten
  */
 public class MainWindow extends JFrame implements IStateListener {
+    public static final int LAYOUT_REGION_SIDE_LENGTH = 25;
 
     private static MainWindow instance = null;
     private JPanel m_elemPanel;
@@ -169,12 +172,16 @@ public class MainWindow extends JFrame implements IStateListener {
      * Creates a Swing GUI on which all other UI elements are placed
      */
     private MainWindow(final StateManager stateMan) {
+        final DashboardPrefs prefs = DashboardPrefs.getInstance();
+        LayoutAllocator.init(LAYOUT_REGION_SIDE_LENGTH, prefs.getWidth(), prefs.getHeight());
+
 	// initialize the registry with all the UI classes
 	// for now, you must do this for every UI class
         DisplayElementRegistry.register(BooleanBox.getSupportedTypes(), BooleanBox.class);
 	DisplayElementRegistry.register(FormattedField.getSupportedTypes(), FormattedField.class);
 	DisplayElementRegistry.register(SimpleDial.getSupportedTypes(), SimpleDial.class);
         DisplayElementRegistry.register(Compass.getSupportedTypes(), Compass.class);
+        DisplayElementRegistry.register(LinePlot.getSupportedTypes(), LinePlot.class);
         DisplayElementRegistry.register(TextBox.getSupportedTypes(), TextBox.class);
 	DisplayElementRegistry.register(ProgressBar.getSupportedTypes(), ProgressBar.class);
 	DisplayElementRegistry.register(Types.Type.NONE, VideoBox.class);
@@ -185,12 +192,10 @@ public class MainWindow extends JFrame implements IStateListener {
 	final DragListener dragListener = new DragListener();
 
 	EventQueue.invokeLater(new Runnable() {
-            public static final int LAYOUT_REGION_SIDE_LENGTH = 25;
-
+            
 	    @Override
 	    public void run() {
-		final DashboardPrefs prefs = DashboardPrefs.getInstance();
-
+		
 		// create context menu for right-click on DisplayElement
 		popupMenu = new JPopupMenu();
 		JMenuItem propertiesItem = new JMenuItem(new PropertiesItemAction("Properties..."));
@@ -247,7 +252,7 @@ public class MainWindow extends JFrame implements IStateListener {
 		// Final Preparations
 		setMinimumSize(new Dimension(300, 200));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                LayoutAllocator.init(LAYOUT_REGION_SIDE_LENGTH, prefs.getWidth(), prefs.getHeight());
+                
 		setPreferredSize(new Dimension(prefs.getWidth(), prefs.getHeight()));
 		MainWindow.this.setLocation(prefs.getX(), prefs.getY());
 		addComponentListener(new ComponentListener() {
@@ -335,6 +340,7 @@ public class MainWindow extends JFrame implements IStateListener {
 	    String path = System.getProperty("user.home") + File.separator + "SmartDashboard.serialized";
 	    fh = new FileInputStream(path);
 	    ObjectInputStream objIn = new ObjectInputStream(fh);
+            main.prepareForSerializationLoad();
 	    getInstance().loadState(objIn);
 	    objIn.close();
 	} catch (FileNotFoundException ex) {
@@ -343,7 +349,9 @@ public class MainWindow extends JFrame implements IStateListener {
 	    ex.printStackTrace();
 	} catch (ClassNotFoundException ex) {
 	    ex.printStackTrace();
-	}
+	} finally {
+            main.finalizeSerializationLoad();
+        }
     }
 
     /**
@@ -371,14 +379,19 @@ public class MainWindow extends JFrame implements IStateListener {
         LayoutAllocator.loadState(objIn);
     }
 
-    public void addField(final DisplayElement elem) {
+    public void addField(DisplayElement elem) {
+        Dimension size = elem.getPreferredSize();
+        LayoutAllocation la = LayoutAllocator.allocate(size.width, size.height);
+        addField(elem, la);
+    }
+
+    public void addField(final DisplayElement elem, final LayoutAllocation la) {
 	EventQueue.invokeLater(new Runnable() {
 
 	    public void run() {
 		elem.init();
                 Dimension size = elem.getPreferredSize();
 
-                LayoutAllocation la = LayoutAllocator.allocate(size.width, size.height);
                 if(la != null) {
                     elem.setLayoutAllocation(la);
                     m_elemPanel.add(elem);
@@ -610,45 +623,6 @@ public class MainWindow extends JFrame implements IStateListener {
      * First, delete the item, then create a new one at the same position
      * and connected to the same record.
      */
-    /*
-    class ChangeToItemAction extends AbstractAction {
-
-	private ChangeToItemAction(String string) {
-	    super(string);
-	}
-
-	public void actionPerformed(ActionEvent ae) {
-	    List<Class> choices;
-	    Record record = selectedElement.getRecord();
-	    try {
-		choices = DisplayElementRegistry.elementsForType(record.getType());
-	    } catch (NoElementsRegisteredForType ex) {
-		Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-		return;
-	    }
-	    for (Class c : choices) {
-		System.out.println("Type choice: " + c.getSimpleName());
-	    }
-	    final Point location = new Point(selectedElement.getLocation());
-	    selectedElement.disconnect();
-            selectedElement.getLayoutAllocation().deallocate();
-	    selectedElement.getParent().remove(selectedElement);
-	    final FormattedField newElement = new FormattedField();
-	    newElement.setFieldName(record.getName());
-	    newElement.setRecord(record);
-	    addField(newElement);
-	    // queue up request to set location so it happens after addField
-	    SwingUtilities.invokeLater(new Runnable() {
-
-		public void run() {
-		    newElement.setLocation(location);
-		}
-	    });
-	    record.addStateReceiver(newElement);
-            newElement.update(record);
-	}
-    }*/
-    
     class ChangeToAction extends AbstractAction {
 	Class elementClass;
 
@@ -674,19 +648,21 @@ public class MainWindow extends JFrame implements IStateListener {
 		return;
 	    }
 
-//	    final FormattedField newElement = new FormattedField();
 	    newElement.setFieldName(record.getName());
 	    newElement.setRecord(record);
-	    addField(newElement);
-	    // queue up request to set location so it happens after addField
-	    SwingUtilities.invokeLater(new Runnable() {
 
-		public void run() {
-		    newElement.setLocation(location);
-		}
-	    });
-	    record.addStateReceiver(newElement);
-            newElement.update(record);
+            Dimension size = newElement.getPreferredSize();
+            LayoutAllocation la = LayoutAllocator.allocate(location, size.width, size.height);
+
+            // If the old object's position can't be reclaimed, find a new one
+            if(la == null)
+                la = LayoutAllocator.allocate(location, size.width, size.height);
+            
+            record.addStateReceiver(newElement);
+            addField(newElement, la);
+
+            if(record.getValue() != null)
+                newElement.update(record);
 	}
     }
 

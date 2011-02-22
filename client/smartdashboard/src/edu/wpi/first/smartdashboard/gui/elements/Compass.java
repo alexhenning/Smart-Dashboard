@@ -26,7 +26,7 @@ public class Compass extends StatefulDisplayElement {
 
     @Override
     public void init() {
-        setProperty(revDistanceProperty, 360);
+        setProperty(revDistanceProperty, 360.0);
         setProperty(ringColorProperty, Color.YELLOW);
 
         m_compass = new CompassPlot(data);
@@ -44,16 +44,20 @@ public class Compass extends StatefulDisplayElement {
         repaint();
     }
 
-    public void update(final Record r) {
+
+    public void updateDisplay(final double value) {
         final JPanel myself = this;
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                data.setValue(((Number) r.getValue()).doubleValue() +
-                        m_compass.getRevolutionDistance() / 2 );
+                data.setValue(value + m_compass.getRevolutionDistance() / 2 );
                 myself.revalidate();
                 myself.repaint();
             }
         });
+    }
+
+    public void update(final Record r) {
+        updateDisplay(((Number) r.getValue()).doubleValue());
     }
 
     public static Types.Type[] getSupportedTypes() {
@@ -70,7 +74,10 @@ public class Compass extends StatefulDisplayElement {
     @Override
     public boolean propertyChange(String key, Object value) {
         if(key == revDistanceProperty) {
-            m_compass.setRevolutionDistance((Double) value);
+            double compassUncorrectedValue = ((Number) data.getValue()).doubleValue() - m_compass.getRevolutionDistance() / 2;
+            m_compass.setRevolutionDistance(Double.parseDouble((String) value));
+            updateDisplay(compassUncorrectedValue);
+
         } else if (key == ringColorProperty) {
             m_compass.setRosePaint((Color) value);
         }

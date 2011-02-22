@@ -17,6 +17,7 @@ public class ReceivedState implements java.io.Serializable {
 
     private final Map<String, Record> m_byName = new HashMap<String, Record>();
     private final Map<Integer, Record> m_byId = new HashMap<Integer, Record>();
+    private final Map<String, Record> m_limboByName = new HashMap<String, Record>();
 
     /**
      * Gets the record associated with the given name.
@@ -62,9 +63,11 @@ public class ReceivedState implements java.io.Serializable {
      */
     public Record register(String name, int id, Types.Type type,
             List<IStateListener> listeners) {
-        Record existing = m_byId.get(id);
+
+        // Check whether the announced field already exists
+        Record existing = m_byName.get(name);
         if (existing != null) {
-            if (existing.getName().equals(name) && existing.getType() == type) {
+            if (existing.getType() == type) {
                 //TODO: make a better way to restore hidden UI elements.
                 if(existing.getStateReceiverCount() == 0) {
                     for (IStateListener listener : listeners) {
@@ -72,11 +75,52 @@ public class ReceivedState implements java.io.Serializable {
                     }
                 }
 
+                if(existing.getId() != id) {
+                    // Move anything at the new ID location to limbo
+                    Record displaced = m_byId.get(id);
+                    if(displaced != null) {
+                        m_limboByName.put(displaced.getName(), displaced);
+                        m_byName.remove(displaced.getName());
+                        m_byId.remove(id);
+                    }
+
+                    // Move the old record to the new ID location
+                    m_byId.remove(existing.getId());
+                    existing.setId(id);
+                    m_byId.put(id, existing);
+                }
+                
                 return existing;
             }
 
+            //TODO: this could leave memory tied up since a GUI object hangs on
+            //to the Record, even though the Record is no longer managed.
             m_byName.remove(existing.getName());
-            m_byId.remove(id);
+            m_byId.remove(existing.getId());
+        }
+
+        // Check whether the announced field already exists, but was put in limbo.
+        existing = m_limboByName.get(name);
+        if(existing != null) {
+            if(existing.getType() == type) {
+                //TODO: make a better way to restore hidden UI elements.
+                if(existing.getStateReceiverCount() == 0) {
+                    for (IStateListener listener : listeners) {
+                       existing.addStateReceiver(listener.newField(existing));
+                    }
+                }
+
+                // Move the old record to the new ID location
+                // Take it out of limbo
+                existing.setId(id);
+                m_byId.put(id, existing);
+                m_byName.put(name, existing);
+                m_limboByName.remove(name);
+
+                return existing;
+            }
+
+            m_limboByName.remove(existing.getName());
         }
 
         Record r = new Record(name, id, type);

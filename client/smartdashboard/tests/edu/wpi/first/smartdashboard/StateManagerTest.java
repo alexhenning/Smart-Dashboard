@@ -96,6 +96,7 @@ public class StateManagerTest {
                 (char) 5, m_manager.getReceivedState().getRecord("Test").getValue());
     }
 
+    
     @Test
     public void testMultipleAnnouncements()
             throws TypeException, UnknownFieldException {
@@ -117,41 +118,47 @@ public class StateManagerTest {
                 m_manager.getReceivedState().getFieldNames().contains("Test"));
         assertEquals("The type of the field should be correct",
                 Types.Type.CHAR, m_manager.getReceivedState().getRecord("Test").getType());
+    }
 
-        // Announce the same field ID with a new field name.
-        ann = generateAnAnnouncement(1, "Tester", Types.Type.CHAR);
+    @Test
+    public void testConflictingIdAnnouncementsAreResolved() throws TypeException, UnknownFieldException {
+        List<Object> ann = generateAnAnnouncement(0, "Test 1", Types.Type.CHAR);
+        m_manager.updateState(ann);
+        ann = generateAnAnnouncement(1, "Test 2", Types.Type.CHAR);
         m_manager.updateState(ann);
 
-        assertEquals("One field is registered",
-                1, m_manager.getReceivedState().getFieldNames().size());
-        assertTrue("The name table should contain 'Tester'",
-                m_manager.getReceivedState().getFieldNames().contains("Tester"));
-        assertEquals("The type of the field should be correct",
-                Types.Type.CHAR, m_manager.getReceivedState().getRecord("Tester").getType());
-
-        // Announce the same field ID with a new field type.
-        ann = generateAnAnnouncement(1, "Tester", Types.Type.SHORT);
-        m_manager.updateState(ann);
-
-        assertEquals("One field is registered",
-                1, m_manager.getReceivedState().getFieldNames().size());
-        assertTrue("The name table should contain 'Tester'",
-                m_manager.getReceivedState().getFieldNames().contains("Tester"));
-        assertEquals("The type of the field should be correct",
-                Types.Type.SHORT, m_manager.getReceivedState().getRecord("Tester").getType());
-
-        // Announce another field id.
-        ann = generateAnAnnouncement(2, "Second", Types.Type.FLOAT);
-        m_manager.updateState(ann);
-
+        // Check initial results
         assertEquals("Two fields are registered",
                 2, m_manager.getReceivedState().getFieldNames().size());
-        assertTrue("The name table should contain 'Second'",
-                m_manager.getReceivedState().getFieldNames().contains("Second"));
-        assertTrue("The name table should contain 'Tester'",
-                m_manager.getReceivedState().getFieldNames().contains("Tester"));
-        assertEquals("The type of the second field should be correct",
-                Types.Type.FLOAT, m_manager.getReceivedState().getRecord("Second").getType());
+        assertTrue("The name table should contain 'Test 1'",
+                m_manager.getReceivedState().getFieldNames().contains("Test 1"));
+        assertTrue("The name table should contain 'Test 2'",
+                m_manager.getReceivedState().getFieldNames().contains("Test 2"));
+
+        assertEquals("The ID of the field 'Test 1' should be correct",
+                0, m_manager.getReceivedState().getRecord("Test 1").getId());
+        assertEquals("The ID of the field 'Test 2' should be correct",
+                1, m_manager.getReceivedState().getRecord("Test 2").getId());
+
+
+        // Flip ID's (simulating a robot restart)
+        ann = generateAnAnnouncement(0, "Test 2", Types.Type.CHAR);
+        m_manager.updateState(ann);
+        ann = generateAnAnnouncement(1, "Test 1", Types.Type.CHAR);
+        m_manager.updateState(ann);
+
+        // Check final results
+        assertEquals("Two fields are registered",
+                2, m_manager.getReceivedState().getFieldNames().size());
+        assertTrue("The name table should contain 'Test 1'",
+                m_manager.getReceivedState().getFieldNames().contains("Test 1"));
+        assertTrue("The name table should contain 'Test 2'",
+                m_manager.getReceivedState().getFieldNames().contains("Test 2"));
+
+        assertEquals("The ID of the field 'Test 1' should be correct",
+                1, m_manager.getReceivedState().getRecord("Test 1").getId());
+        assertEquals("The ID of the field 'Test 2' should be correct",
+                0, m_manager.getReceivedState().getRecord("Test 2").getId());
     }
 
 }

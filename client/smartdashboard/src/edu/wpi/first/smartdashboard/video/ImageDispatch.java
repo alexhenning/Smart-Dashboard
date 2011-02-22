@@ -65,8 +65,9 @@ public class ImageDispatch extends Thread {
                 if(DashboardPrefs.getInstance().getDebugVideoErrors()) {
                         JOptionPane.showMessageDialog(MainWindow.getInstance(),
                                                       "Unable to connect to the robot to receive video. "
-                                                      + "Check your team number in the preferences dialog and restart "
-                                                      + "the dashboard to try again. The exception was:\n\n" + ex,
+                                                      + "Check your team number in the preferences dialog"
+                                                      + " and disable/reenable video to try again. The exception "
+                                                      + "was:\n\n" + ex,
                                                       "Network Problem",
                                                       JOptionPane.ERROR_MESSAGE);
                         stopThread();
