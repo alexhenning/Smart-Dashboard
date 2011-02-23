@@ -178,6 +178,16 @@ public class MainWindow extends JFrame implements IStateListener {
 	    });
 	testMenu.add(addWidgetMenu);
 
+	JMenuItem normalSizeMenu = new JMenuItem("Normal Size");
+	normalSizeMenu.addActionListener(new ActionListener() {
+		
+		public void actionPerformed(ActionEvent ae) {
+		    setSize(800, 480);
+		    System.out.println("Normal Size...");
+		}
+	    });
+	testMenu.add(normalSizeMenu);
+		
 	customMenuBar.add(fileMenu);
         customMenuBar.add(viewMenu);
 	customMenuBar.add(testMenu);
