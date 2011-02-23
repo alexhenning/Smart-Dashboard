@@ -3,6 +3,7 @@ package edu.wpi.first.smartdashboard.gui;
 import edu.wpi.first.smartdashboard.StateManager;
 import edu.wpi.first.smartdashboard.gui.DisplayElementRegistry.NoElementsRegisteredForType;
 import edu.wpi.first.smartdashboard.gui.elements.BooleanBox;
+import edu.wpi.first.smartdashboard.gui.elements.BooleanPic;
 import edu.wpi.first.smartdashboard.gui.elements.Compass;
 import edu.wpi.first.smartdashboard.gui.elements.FormattedField;
 import edu.wpi.first.smartdashboard.gui.elements.LinePlot;
@@ -193,6 +194,7 @@ public class MainWindow extends JFrame implements IStateListener {
 	// initialize the registry with all the UI classes
 	// for now, you must do this for every UI class
         DisplayElementRegistry.register(BooleanBox.getSupportedTypes(), BooleanBox.class);
+	DisplayElementRegistry.register(BooleanPic.getSupportedTypes(), BooleanPic.class);
 	DisplayElementRegistry.register(FormattedField.getSupportedTypes(), FormattedField.class);
 	DisplayElementRegistry.register(SimpleDial.getSupportedTypes(), SimpleDial.class);
         DisplayElementRegistry.register(Compass.getSupportedTypes(), Compass.class);
