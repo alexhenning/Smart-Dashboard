@@ -2,6 +2,7 @@ package edu.wpi.first.smartdashboard.fakerobot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.System;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -73,6 +74,8 @@ public class Main {
 	double speed = 2,
 	    grabber = 0,
 	    arm = 0;
+	int time, matchTime = 120; // seconds
+	long startTime = System.nanoTime();
 
         while (true) {
 	    // Update
@@ -86,6 +89,13 @@ public class Main {
 	    arm += (Math.random() - 0.5) / 4;
 	    if (arm < 0) arm = 0;
 	    if (arm > 2) arm = 2;
+
+	    time = (int) (matchTime - (((double) (System.nanoTime() - startTime))
+				       / 1000000000));
+	    if (time < 0) {
+		startTime = System.nanoTime();
+		time = matchTime;
+	    }
 
 	    // Send
 	    SmartDashboard.log(speed, "Speed");
@@ -101,6 +111,8 @@ public class Main {
 	    } else {
 		SmartDashboard.log(false, "Limit");
 	    }
+
+	    SmartDashboard.log(time, "Time");
 
 	    // Wait
 	    try {
