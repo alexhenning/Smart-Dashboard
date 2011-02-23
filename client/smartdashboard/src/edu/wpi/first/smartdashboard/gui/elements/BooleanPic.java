@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 public class BooleanPic extends StatefulDisplayElement {
     protected String imageTruePath = "images/true.png",
                      imageFalsePath = "images/false.png";
-    protected BufferedImage imageTrue, imageFalse, image;
+    protected transient BufferedImage imageTrue, imageFalse, image;
 
     public void init() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -31,6 +31,13 @@ public class BooleanPic extends StatefulDisplayElement {
         repaint();
 	setPreferredSize(new Dimension(100, 100));
 	setBackground(Color.GREEN);
+	loadImages();
+
+	setProperty(statusBackgroundImageTrue, imageTruePath);
+        setProperty(statusBackgroundImageFalse, imageFalsePath);
+    }
+
+    public void loadImages() {
         try {
             imageTrue = ImageIO.read(new File(imageTruePath));
             imageFalse = ImageIO.read(new File(imageFalsePath));
@@ -39,14 +46,14 @@ public class BooleanPic extends StatefulDisplayElement {
 	} catch (IOException ex) {
 	    ex.printStackTrace();
 	}
-
-	setProperty(statusBackgroundImageTrue, imageTrue);
-        setProperty(statusBackgroundImageFalse, imageFalse);
     }
 
     
     @Override
     public void paintComponent(Graphics g) {
+	if (imageTrue == null) {
+	    loadImages();
+	}
         g.drawImage(image, 0, 0, null); // see javadoc for more info on the parameters
     }
 
