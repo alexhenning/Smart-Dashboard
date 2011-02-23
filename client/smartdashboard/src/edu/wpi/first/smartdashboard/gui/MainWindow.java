@@ -165,19 +165,6 @@ public class MainWindow extends JFrame implements IStateListener {
         });
         viewMenu.add(snapToGridChckbox);
 
-	JMenu testMenu = new JMenu("Test");
-	testMenu.addMenuListener(disableGlassPaneOnMenu);
-	
-	JMenuItem addWidgetMenu = new JMenuItem("Add Widget");
-	addWidgetMenu.addActionListener(new ActionListener() {
-		
-		public void actionPerformed(ActionEvent ae) {
-		    System.out.println("Creating widget...");
-		    newField(new RandomRecord("Test", Types.Type.BOOLEAN));
-		}
-	    });
-	testMenu.add(addWidgetMenu);
-
 	JMenuItem normalSizeMenu = new JMenuItem("Normal Size");
 	normalSizeMenu.addActionListener(new ActionListener() {
 		
@@ -186,11 +173,10 @@ public class MainWindow extends JFrame implements IStateListener {
 		    System.out.println("Normal Size...");
 		}
 	    });
-	testMenu.add(normalSizeMenu);
+	viewMenu.add(normalSizeMenu);
 		
 	customMenuBar.add(fileMenu);
         customMenuBar.add(viewMenu);
-	customMenuBar.add(testMenu);
 	return customMenuBar;
     }
 
