@@ -51,7 +51,7 @@ public class BooleanPic extends StatefulDisplayElement {
     
     @Override
     public void paintComponent(Graphics g) {
-	if (imageTrue == null) {
+	if (imageTrue == null || imageFalse == null) {
 	    loadImages();
 	}
         g.drawImage(image, 0, 0, null); // see javadoc for more info on the parameters
