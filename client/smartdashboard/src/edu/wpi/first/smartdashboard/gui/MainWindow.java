@@ -76,7 +76,7 @@ public class MainWindow extends JFrame implements IStateListener {
     Component contentPane;
     JMenuBar menuBar;
     JPopupMenu popupMenu;
-    StatefulDisplayElement selectedElement;
+    DisplayElement selectedElement;
     PropertyEditor propEditor = null;
     JMenu changeToMenu;
     private static MenuListener disableGlassPaneOnMenu;
@@ -91,18 +91,20 @@ public class MainWindow extends JFrame implements IStateListener {
     }
 
     private void setupChangeToPopupMenu() {
-	List<Class> choices;
-	Record record = selectedElement.getRecord();
-	try {
-	    choices = DisplayElementRegistry.elementsForType(record.getType());
-	} catch (NoElementsRegisteredForType ex) {
-	    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-	    changeToMenu.setEnabled(false);
-	    return; // no choices - make the ChangeTo menu item insensitive
-	}
-	changeToMenu.removeAll();
-	for (Class c : choices) {
-	    changeToMenu.add(new ChangeToAction(c.getSimpleName(), c));
+	if (selectedElement instanceof StatefulDisplayElement) {
+	    List<Class> choices;
+	    Record record = ((StatefulDisplayElement) selectedElement).getRecord();
+	    try {
+		choices = DisplayElementRegistry.elementsForType(record.getType());
+	    } catch (NoElementsRegisteredForType ex) {
+		Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+		changeToMenu.setEnabled(false);
+		return; // no choices - make the ChangeTo menu item insensitive
+	    }
+	    changeToMenu.removeAll();
+	    for (Class c : choices) {
+		changeToMenu.add(new ChangeToAction(c.getSimpleName(), c));
+	    }
 	}
 
 	// all all the classes from "choices" to the menu
@@ -175,6 +177,16 @@ public class MainWindow extends JFrame implements IStateListener {
 		}
 	    });
 	viewMenu.add(normalSizeMenu);
+
+	JMenuItem addLabelMenu = new JMenuItem("Add Label");
+	addLabelMenu.addActionListener(new ActionListener() {
+		
+		public void actionPerformed(ActionEvent ae) {
+		    System.out.println("Adding a label...");
+		    addField(new FormattedLabel());
+		}
+	    });
+	viewMenu.add(addLabelMenu);
 		
 	customMenuBar.add(fileMenu);
         customMenuBar.add(viewMenu);
@@ -491,8 +503,8 @@ public class MainWindow extends JFrame implements IStateListener {
 
 	    if (dragTarget != null) {
 		if (e.isPopupTrigger()) {
-		    if (dragTarget instanceof StatefulDisplayElement) {
-			selectedElement = (StatefulDisplayElement) dragTarget;
+		    if (dragTarget instanceof DisplayElement) {
+			selectedElement = (DisplayElement) dragTarget;
 			setupChangeToPopupMenu();
 			popupMenu.show(MainWindow.this, e.getX(), e.getY());
 		    }
@@ -500,7 +512,7 @@ public class MainWindow extends JFrame implements IStateListener {
 		    if (e.getClickCount() == 2 && dragTarget instanceof StatefulDisplayElement) {
 			selectedElement = (StatefulDisplayElement) dragTarget;
 			if (propEditor != null) {
-			    propEditor.setDisplayElelment(selectedElement);
+			    propEditor.setDisplayElement(selectedElement);
 			}
 		    } else {
 			dragging = true;
@@ -605,7 +617,11 @@ public class MainWindow extends JFrame implements IStateListener {
 	}
 
 	public void actionPerformed(ActionEvent ae) {
-	    System.out.println("Removing: " + selectedElement.getFieldName());
+	    if (selectedElement instanceof StatefulDisplayElement) {
+		System.out.println("Removing: " +
+				   ((StatefulDisplayElement) selectedElement)
+				                                .getFieldName());
+	    }
 	    selectedElement.disconnect();
             selectedElement.getLayoutAllocation().deallocate();
 	    selectedElement.getParent().remove(selectedElement);
@@ -629,7 +645,7 @@ public class MainWindow extends JFrame implements IStateListener {
 	    if (propEditor == null) {
 		propEditor = new PropertyEditor(MainWindow.this);
 	    }
-	    propEditor.setDisplayElelment(selectedElement);
+	    propEditor.setDisplayElement(selectedElement);
 	    propEditor.setVisible(true);
 	}
     }
@@ -648,37 +664,39 @@ public class MainWindow extends JFrame implements IStateListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-	    final StatefulDisplayElement newElement;
-	    Record record = selectedElement.getRecord();
-	    final Point location = new Point(selectedElement.getLocation());
-	    selectedElement.disconnect();
-            selectedElement.getLayoutAllocation().deallocate();
-	    selectedElement.getParent().remove(selectedElement);
-	    try {
-		newElement = (StatefulDisplayElement) elementClass.newInstance();
-	    } catch (InstantiationException ex) {
-		Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-		return;
-	    } catch (IllegalAccessException ex) {
-		Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-		return;
-	    }
+	    if (selectedElement instanceof StatefulDisplayElement) {
+		final StatefulDisplayElement newElement;
+		Record record = ((StatefulDisplayElement) selectedElement).getRecord();
+		final Point location = new Point(selectedElement.getLocation());
+		selectedElement.disconnect();
+		selectedElement.getLayoutAllocation().deallocate();
+		selectedElement.getParent().remove(selectedElement);
+		try {
+		    newElement = (StatefulDisplayElement) elementClass.newInstance();
+		} catch (InstantiationException ex) {
+		    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+		    return;
+		} catch (IllegalAccessException ex) {
+		    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+		    return;
+		}
+		
+		newElement.setFieldName(record.getName());
+		newElement.setRecord(record);
 
-	    newElement.setFieldName(record.getName());
-	    newElement.setRecord(record);
+		Dimension size = newElement.getPreferredSize();
+		LayoutAllocation la = LayoutAllocator.allocate(location, size.width, size.height);
 
-            Dimension size = newElement.getPreferredSize();
-            LayoutAllocation la = LayoutAllocator.allocate(location, size.width, size.height);
-
-            // If the old object's position can't be reclaimed, find a new one
-            if(la == null)
-                la = LayoutAllocator.allocate(location, size.width, size.height);
+		// If the old object's position can't be reclaimed, find a new one
+		if(la == null)
+		    la = LayoutAllocator.allocate(location, size.width, size.height);
             
-            record.addStateReceiver(newElement);
-            addField(newElement, la);
+		record.addStateReceiver(newElement);
+		addField(newElement, la);
 
-            if(record.getValue() != null)
-                newElement.update(record);
+		if(record.getValue() != null)
+		    newElement.update(record);
+	    }
 	}
     }
 

@@ -4,6 +4,7 @@
  */
 package edu.wpi.first.smartdashboard.gui;
 
+import edu.wpi.first.smartdashboard.util.DisplayElement;
 import edu.wpi.first.smartdashboard.util.StatefulDisplayElement;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,7 +34,7 @@ public class PropertyEditor extends JDialog {
 
     JTable table;
     PropTableModel tableModel;
-    StatefulDisplayElement selectedElement;
+    DisplayElement selectedElement;
     String[] elementProperties;
 
     public PropertyEditor(JFrame frame) {
@@ -48,9 +49,13 @@ public class PropertyEditor extends JDialog {
 	getContentPane().add(scrollPane, BorderLayout.CENTER);
     }
 
-    void setDisplayElelment(StatefulDisplayElement selectedElement) {
+    void setDisplayElement(DisplayElement selectedElement) {
 	this.selectedElement = selectedElement;
-	this.setTitle(selectedElement.getFieldName());
+	if (selectedElement instanceof StatefulDisplayElement) {
+	    this.setTitle(((StatefulDisplayElement)selectedElement).getFieldName());
+	} else {
+	    this.setTitle("Edit Properties");
+	}
 	elementProperties = selectedElement.getPropertiesKeys();
 	tableModel.fireTableDataChanged();
     }
