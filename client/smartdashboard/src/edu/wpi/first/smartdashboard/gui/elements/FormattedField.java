@@ -96,8 +96,8 @@ public class FormattedField extends StatefulDisplayElement {
     }
 
     protected final String widthProperty = "Width",
-	foregroundProperty = "Foreground",
-	backgroundProperty = "Background color",
+	foregroundProperty = "Foreground Color",
+	backgroundProperty = "Background Color",
 	fontSizeProperty = "Font size",
 	heightProperty = "Height";
 
