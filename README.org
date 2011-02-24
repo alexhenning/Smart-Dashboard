@@ -9,24 +9,24 @@ If you'd like to customize it to your robot, modify main.java in client/fakerobo
 
 * Smart Dashboard
 The normal Smart Dashboard with two added widgets:
+
 ** BooleanPic
 A widget that toggles between two pictures based off of the value of the boolean. Ideally improving the usability of the dashboard by allowing easy visual recognition.
 
 ** VerticalProgressBar
 A vertical progress bar that allows you to change it's size, scale and color.
 
-* Features to add [0/11]
+** TimeField
+A field that displays time and that may change the color of the text to alert that a certain amount of time is left. (i.e. turn red at 15 seconds)
+
+* Features to add [0/10]
 ** TODO Improved formatted text field
 ** TODO Formattable labels that can be added by user
-** TODO Time widget that changes color in last n seconds
 ** TODO Digital display widget for speed
 ** TODO Support for files in the properties dialog
-
 ** TODO Support to change the background color
-
 ** TODO Have VerticalProgressBar automagically handle scaling
 ** TODO Support for checkboxes in the properties dialog
 ** TODO Merge VerticalProgressBar into ProgressBar
 ** TODO Ask to save before quiting
 ** TODO Add support for multiple saves
-
