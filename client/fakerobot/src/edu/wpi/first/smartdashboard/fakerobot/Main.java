@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 
 /**
  *
- * @author pmalmsten
+ * @author pmalmsten (Modified by Alex Henning)
  */
 public class Main {
 
@@ -71,40 +71,55 @@ public class Main {
 
         System.out.println("Running...");
 
-	double speed = 2,
-	    grabber = 0,
+	double positions[] = {1.87, 1.680, 0.915, 0.700, 0};
+	
+	double v = 0,
+	    a = 0,
 	    arm = 0;
-	int time, matchTime = 120; // seconds
+	int time = 120, matchTime = 120; // seconds
 	long startTime = System.nanoTime();
+	int target = 4, changeTime = 115;
+	boolean grabber;
 
         while (true) {
 	    // Update
-	    speed += (4 * Math.random()) - 1.9;
-	    if (speed < 0) speed = 0;
-	    if (speed > 20) speed = 20;
+	    a += (Math.random() - 0.4) * 2;
+	    v += a;
+	    if (v < 0) {
+		v = 0;
+		a = 0;
+	    } else if (v > 20) {
+		v = 20;
+		a = 0;
+	    }
 	    
-	    grabber += Math.random()/2-0.1;
-	    grabber %= 10;
-	    
-	    arm += (Math.random() - 0.5) / 4;
+	    if (time <= changeTime) {
+		target = (int) (Math.random() * positions.length);
+		System.out.println((1 + target)+" --- "+positions[target]);
+		changeTime = time - (int) (Math.random() * 20);
+	    }
+	    arm = (arm * .95) + (positions[target] * .05);
 	    if (arm < 0) arm = 0;
 	    if (arm > 2) arm = 2;
+
+	    if (Math.abs(arm - positions[target]) < 0.1) {
+		grabber = true;
+	    } else {
+		grabber = false;
+	    }
 
 	    time = (int) (matchTime - (((double) (System.nanoTime() - startTime))
 				       / 1000000000));
 	    if (time < 0) {
 		startTime = System.nanoTime();
 		time = matchTime;
+		changeTime = 115;
 	    }
 
 	    // Send
-	    SmartDashboard.log(speed, "Speed");
-	    if (grabber > 5) {
-		SmartDashboard.log(true, "Grabber");
-	    } else {
-		SmartDashboard.log(false, "Grabber");
-	    }
-		
+	    SmartDashboard.log(v, "Speed");
+	    
+	    SmartDashboard.log(grabber, "Grabber");
 	    SmartDashboard.log(arm, "Arm");
 	    if (arm < 0.1) {
 		SmartDashboard.log(true, "Limit");
