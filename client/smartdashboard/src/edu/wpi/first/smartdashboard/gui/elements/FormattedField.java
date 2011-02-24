@@ -5,7 +5,12 @@ import edu.wpi.first.smartdashboard.state.Record;
 import edu.wpi.first.smartdashboard.types.Types;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import javax.swing.BoxLayout;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -16,7 +21,7 @@ import javax.swing.JTextField;
  * @author pmalmsten
  */
 public class FormattedField extends StatefulDisplayElement {
-    private JFormattedTextField valueField;
+    protected JFormattedTextField valueField;
 
     public void init() {
         setLayout(new BorderLayout());
@@ -31,8 +36,11 @@ public class FormattedField extends StatefulDisplayElement {
         revalidate();
         repaint();
 
-	setProperty(widthProperty, valueField.getColumns());
+	setProperty(foregroundProperty, valueField.getForeground());
 	setProperty(backgroundProperty, valueField.getBackground());
+	setProperty(fontSizeProperty, valueField.getFont().getSize());
+    	setProperty(widthProperty, getWidth());
+	setProperty(heightProperty, getHeight());
     }
 
     public void update(final Record r) {
@@ -53,18 +61,44 @@ public class FormattedField extends StatefulDisplayElement {
 
     @Override
     public boolean propertyChange(String key, Object value) {
-	if (key == widthProperty) valueField.setColumns(Integer.parseInt((String)value));
-	else if (key == backgroundProperty) valueField.setBackground((Color) value);
+	if (key == foregroundProperty) {
+	    valueField.setForeground((Color) value);
+	} else if (key == backgroundProperty) {
+	    valueField.setBackground((Color) value);
+	} else if (key == fontSizeProperty) {
+	    valueField.setFont( new Font(valueField.getFont().getFontName(),
+					 valueField.getFont().getStyle(),
+					 (int) Integer.parseInt((String) value)) );
+	} else if (key == widthProperty) {
+	    setSize(new Dimension(Integer.parseInt((String) value),
+				  getHeight()));
+	} else if (key == heightProperty) {
+	    setSize(getWidth(),
+		    Integer.parseInt((String) value));
+	}
 	return true;
     }
 
     @Override
     public Object getPropertyValue(String key) {
-	if (key == widthProperty) return valueField.getColumns();
-	else if (key == backgroundProperty) return valueField.getBackground();
+	if (key == foregroundProperty) {
+	    return valueField.getForeground();
+	} else if (key == backgroundProperty) {
+	    return valueField.getBackground();
+	} else if (key == fontSizeProperty) {
+	    return valueField.getFont().getSize();
+	} else if (key == widthProperty) {
+	    return getWidth();
+	} else if (key == heightProperty) {
+	    return getHeight();
+	}
 	else return null;
     }
 
-    private final String widthProperty = "Width";
-    private final String backgroundProperty = "Background color";
+    protected final String widthProperty = "Width",
+	foregroundProperty = "Foreground",
+	backgroundProperty = "Background color",
+	fontSizeProperty = "Font size",
+	heightProperty = "Height";
+
 }
