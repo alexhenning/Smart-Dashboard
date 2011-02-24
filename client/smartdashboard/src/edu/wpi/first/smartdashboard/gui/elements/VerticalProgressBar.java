@@ -7,6 +7,7 @@ package edu.wpi.first.smartdashboard.gui.elements;
 import edu.wpi.first.smartdashboard.state.Record;
 import edu.wpi.first.smartdashboard.types.Types;
 import edu.wpi.first.smartdashboard.util.StatefulDisplayElement;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -39,13 +40,11 @@ public class VerticalProgressBar extends StatefulDisplayElement {
 	progressBar.setBounds(progressBar.getX(), progressBar.getY(),
 			      progressBar.getX() + 200, progressBar.getY() + 40);
 
-	setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-	add(new JLabel(m_name));
-	add(progressBar);
+	setLayout(new BorderLayout());
+	add(new JLabel(m_name), BorderLayout.PAGE_START);
+	add(progressBar, BorderLayout.CENTER);
 	revalidate();
 	repaint();
-
-	setSize(50, 400);
 	
 	setProperty(foregroundProperty, progressBar.getForeground());
 	setProperty(backgroundProperty, progressBar.getBackground());
@@ -66,12 +65,12 @@ public class VerticalProgressBar extends StatefulDisplayElement {
 	} else if (key == minimumProperty) {
 	    progressBar.setMinimum(Integer.parseInt((String) value) * 100);
 	} else if (key == widthProperty) {
-	    progressBar.setSize(new Dimension(Integer.parseInt((String) value),
+	    setSize(new Dimension(Integer.parseInt((String) value),
 					  progressBar.getHeight()));
 	    // setSize(new Dimension(Integer.parseInt((String) value),
 	    // 				  progressBar.getHeight()));
 	} else if (key == heightProperty) {
-	    progressBar.setSize(progressBar.getWidth(),
+	    setSize(progressBar.getWidth(),
 				Integer.parseInt((String) value));
 	    // setSize(progressBar.getWidth(),
 	    // 			Integer.parseInt((String) value));
@@ -102,9 +101,9 @@ public class VerticalProgressBar extends StatefulDisplayElement {
 	if (key == minimumProperty) {
 	    return progressBar.getMinimum() / 100;
 	} else if (key == widthProperty) {
-	    return progressBar.getWidth();
+	    return getWidth();
 	} else if (key == heightProperty) {
-	    return progressBar.getHeight();
+	    return getHeight();
 	} else {
 	    return 0;
 	}
