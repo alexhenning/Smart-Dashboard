@@ -22,11 +22,12 @@ import javax.swing.JTextField;
  */
 public class FormattedField extends StatefulDisplayElement {
     protected JFormattedTextField valueField;
+    JLabel nameLabel;
 
     public void init() {
         setLayout(new BorderLayout());
-
-        JLabel nameLabel = new JLabel(m_name);
+	
+	nameLabel = new JLabel(m_name);
         valueField = new JFormattedTextField();
         valueField.setEditable(false);
         valueField.setColumns(10);
