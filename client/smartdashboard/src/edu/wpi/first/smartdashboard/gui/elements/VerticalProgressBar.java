@@ -66,14 +66,10 @@ public class VerticalProgressBar extends StatefulDisplayElement {
 	    progressBar.setMinimum(Integer.parseInt((String) value) * 100);
 	} else if (key == widthProperty) {
 	    setSize(new Dimension(Integer.parseInt((String) value),
-					  progressBar.getHeight()));
-	    // setSize(new Dimension(Integer.parseInt((String) value),
-	    // 				  progressBar.getHeight()));
+				  getHeight()));
 	} else if (key == heightProperty) {
-	    setSize(progressBar.getWidth(),
-				Integer.parseInt((String) value));
-	    // setSize(progressBar.getWidth(),
-	    // 			Integer.parseInt((String) value));
+	    setSize(getWidth(),
+		    Integer.parseInt((String) value));
 	}
 	return true;
     }
