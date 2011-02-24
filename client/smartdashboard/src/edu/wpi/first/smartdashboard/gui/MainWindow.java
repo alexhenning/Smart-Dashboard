@@ -11,6 +11,7 @@ import edu.wpi.first.smartdashboard.gui.elements.ProgressBar;
 import edu.wpi.first.smartdashboard.gui.elements.SimpleDial;
 import edu.wpi.first.smartdashboard.state.Record;
 import edu.wpi.first.smartdashboard.gui.elements.TextBox;
+import edu.wpi.first.smartdashboard.gui.elements.VerticalProgressBar;
 import edu.wpi.first.smartdashboard.gui.elements.VideoBox;
 import edu.wpi.first.smartdashboard.gui.layout.LayoutAllocator;
 import edu.wpi.first.smartdashboard.gui.layout.LayoutAllocator.LayoutAllocation;
@@ -197,6 +198,7 @@ public class MainWindow extends JFrame implements IStateListener {
         DisplayElementRegistry.register(LinePlot.getSupportedTypes(), LinePlot.class);
         DisplayElementRegistry.register(TextBox.getSupportedTypes(), TextBox.class);
 	DisplayElementRegistry.register(ProgressBar.getSupportedTypes(), ProgressBar.class);
+	DisplayElementRegistry.register(VerticalProgressBar.getSupportedTypes(), VerticalProgressBar.class);
 	DisplayElementRegistry.register(Types.Type.NONE, VideoBox.class);
 
 	m_stateMan = stateMan;
