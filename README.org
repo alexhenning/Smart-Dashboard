@@ -1,0 +1,26 @@
+
+* Overview
+This is modification of Smart Dashboard from WPILib. This repository is a work in progress for FIRST team 348 in the 2011 season, however the intent is to add any useful feature back to the official dashboard. As a result, certain widgets or features (such as all my modifications to fakerobot) I add may be far too specific to be added back to the actual Smart Dashboard.
+
+* Fake Robot
+The fake robot sends random data to the dashboard. It is designed to be within what is reasonable for what is pretending to be, but it is rather jittery as a result.
+
+If you'd like to customize it to your robot, modify main.java in client/fakerobot/src/.... Although, unless you're using a feature I've added and that hasn't been added to the official repository, I'd recommend checking it out from: http://firstforge.wpi.edu/sf/projects/smartdashboard
+
+* Smart Dashboard
+The normal Smart Dashboard with two added widgets:
+** BooleanPic
+** VerticalProgressBar
+
+* Features to add [0/11]
+** TODO Support for files in the properties dialog
+** TODO Support for checkboxes in the properties dialog
+** TODO Time widget that changes color in last n seconds
+** TODO Digital display widget for speed
+** TODO Improved formatted text field
+** TODO Formattable labels that can be added
+** TODO Support to change the background color
+** TODO Resizing of VerticalProgressBar
+** TODO Merge VerticalProgressBar into ProgressBar
+** TODO Add support for multiple saves
+** TODO Ask to save before quiting
