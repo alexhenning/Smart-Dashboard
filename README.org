@@ -8,7 +8,10 @@ The fake robot sends random data to the dashboard. It is designed to be within w
 If you'd like to customize it to your robot, modify main.java in client/fakerobot/src/.... Although, unless you're using a feature I've added and that hasn't been added to the official repository, I'd recommend checking it out from: http://firstforge.wpi.edu/sf/projects/smartdashboard
 
 * Smart Dashboard
-The normal Smart Dashboard with two added widgets:
+The normal Smart Dashboard with added some widgets:
+
+** FormattedLabel
+A label that can be added from the view menu to display whatever text you desire.
 
 ** BooleanPic
 A widget that toggles between two pictures based off of the value of the boolean. Ideally improving the usability of the dashboard by allowing easy visual recognition.
@@ -19,9 +22,7 @@ A vertical progress bar that allows you to change it's size, scale and color.
 ** TimeField
 A field that displays time and that may change the color of the text to alert that a certain amount of time is left. (i.e. turn red at 15 seconds)
 
-* Features to add [0/10]
-** TODO Improved formatted text field
-** TODO Formattable labels that can be added by user
+* Features to add [0/9]
 ** TODO Digital display widget for speed
 ** TODO Support for files in the properties dialog
 ** TODO Support to change the background color
@@ -30,3 +31,4 @@ A field that displays time and that may change the color of the text to alert th
 ** TODO Merge VerticalProgressBar into ProgressBar
 ** TODO Ask to save before quiting
 ** TODO Add support for multiple saves
+** TODO Bold text
