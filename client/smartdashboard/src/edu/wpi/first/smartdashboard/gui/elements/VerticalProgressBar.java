@@ -23,12 +23,12 @@ import javax.swing.SwingConstants;
 public class VerticalProgressBar extends StatefulDisplayElement {
 
     private JProgressBar progressBar;
-    private final String foregroundProperty = "Foreground";
-    private final String backgroundProperty = "Background";
-    private final String maximumProperty = "Maximum";
-    private final String minimumProperty = "Minimum";
-    private final String widthProperty = "Width";
-    private final String heightProperty = "Height";
+    private final String foregroundProperty = "Foreground",
+	backgroundProperty = "Background",
+	maximumProperty = "Maximum",
+	minimumProperty = "Minimum",
+	widthProperty = "Width",
+	heightProperty = "Height";
 
     @Override
     public void init() {
@@ -50,8 +50,8 @@ public class VerticalProgressBar extends StatefulDisplayElement {
 	setProperty(backgroundProperty, progressBar.getBackground());
 	setProperty(maximumProperty, progressBar.getMaximum());
 	setProperty(minimumProperty, progressBar.getMinimum());
-    	setProperty(widthProperty, progressBar.getWidth());
-	setProperty(heightProperty, progressBar.getHeight());
+    	setProperty(widthProperty, getWidth());
+	setProperty(heightProperty, getHeight());
     }
 
     @Override
