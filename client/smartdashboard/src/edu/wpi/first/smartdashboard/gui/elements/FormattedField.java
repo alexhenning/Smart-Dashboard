@@ -3,6 +3,7 @@ package edu.wpi.first.smartdashboard.gui.elements;
 import edu.wpi.first.smartdashboard.util.StatefulDisplayElement;
 import edu.wpi.first.smartdashboard.state.Record;
 import edu.wpi.first.smartdashboard.types.Types;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import javax.swing.BoxLayout;
@@ -18,15 +19,15 @@ public class FormattedField extends StatefulDisplayElement {
     private JFormattedTextField valueField;
 
     public void init() {
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        setLayout(new BorderLayout());
 
         JLabel nameLabel = new JLabel(m_name);
         valueField = new JFormattedTextField();
         valueField.setEditable(false);
         valueField.setColumns(10);
 
-        add(nameLabel);
-        add(valueField);
+        add(nameLabel, BorderLayout.LINE_START);
+        add(valueField, BorderLayout.CENTER);
         revalidate();
         repaint();
 

@@ -16,7 +16,6 @@ import edu.wpi.first.smartdashboard.gui.elements.VideoBox;
 import edu.wpi.first.smartdashboard.gui.layout.LayoutAllocator;
 import edu.wpi.first.smartdashboard.gui.layout.LayoutAllocator.LayoutAllocation;
 import edu.wpi.first.smartdashboard.main;
-import edu.wpi.first.smartdashboard.state.RandomRecord;
 import edu.wpi.first.smartdashboard.types.Types;
 import edu.wpi.first.smartdashboard.util.StatefulDisplayElement;
 import edu.wpi.first.smartdashboard.util.IStateListener;
