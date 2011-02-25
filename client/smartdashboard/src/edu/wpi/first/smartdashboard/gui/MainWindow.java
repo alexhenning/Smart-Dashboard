@@ -282,7 +282,7 @@ public class MainWindow extends JFrame implements IStateListener {
 
 		// Final Preparations
 		setMinimumSize(new Dimension(300, 200));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {
 			    MainWindow.exit();

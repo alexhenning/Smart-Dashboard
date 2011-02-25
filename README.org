@@ -22,7 +22,7 @@ A vertical progress bar that allows you to change it's size, scale and color.
 ** TimeField
 A field that displays time and that may change the color of the text to alert that a certain amount of time is left. (i.e. turn red at 15 seconds)
 
-* Features to add [0/7]
+* Features to add [0/6]
 ** TODO Support to change the background color
 ** TODO Have VerticalProgressBar automagically handle scaling
 ** TODO Support for checkboxes in the properties dialog
