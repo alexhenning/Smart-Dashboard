@@ -82,13 +82,13 @@ public class BooleanPic extends StatefulDisplayElement {
     @Override
     public boolean propertyChange(String key, Object value) {
 	if (key == statusBackgroundImageTrue) {
-	    imageTruePath = (String) value;
+	    imageTruePath = ((File) value).getPath();
 	    try {
 		imageTrue = ImageIO.read(new File(imageTruePath));
 	    } catch (IOException ex) {}
         }
 	else if (key == statusBackgroundImageFalse) {
-	    imageFalsePath = (String) value;
+	    imageFalsePath = ((File) value).getPath();
 	    try {
 		imageFalse = ImageIO.read(new File(imageFalsePath));
 	    } catch (IOException ex) {}
@@ -99,8 +99,8 @@ public class BooleanPic extends StatefulDisplayElement {
 
     @Override
     public Object getPropertyValue(String key) {
-	if (key == statusBackgroundImageTrue) return imageTruePath;
-	else if (key == statusBackgroundImageFalse) return imageFalsePath;
+	if (key == statusBackgroundImageTrue) return new File(imageTruePath);
+	else if (key == statusBackgroundImageFalse) return new File(imageFalsePath);
 	return null;
     }
 

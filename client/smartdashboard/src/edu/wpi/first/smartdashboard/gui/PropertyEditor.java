@@ -13,10 +13,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.EventObject;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -64,6 +66,7 @@ public class PropertyEditor extends JDialog {
 
 	TableCellEditor colorTableCellEditor = new ColorTableCellEditor();
 	TableCellRenderer colorTableCellRenderer = new ColorTableCellRenderer();
+    TableCellEditor fileTableCellEditor = new FileTableCellEditor();
 	AbstractTableModel model;
 
 	PropertiesTable(AbstractTableModel model) {
@@ -75,16 +78,20 @@ public class PropertyEditor extends JDialog {
 	public TableCellEditor getCellEditor(int row, int col) {
 	    if (selectedElement.getPropertyValue(elementProperties[row]) instanceof Color) {
 		return colorTableCellEditor;
+	    } else if (selectedElement.getPropertyValue(elementProperties[row]) instanceof File) {
+		return fileTableCellEditor;
+	    } else {
+		return super.getCellEditor(row, col);
 	    }
-	    else return super.getCellEditor(row, col);
 	}
 
         @Override
 	public TableCellRenderer getCellRenderer(int row, int col) {
 	    if (model.getValueAt(row, col) instanceof Color) {
 		return colorTableCellRenderer;
+	    } else {
+		return super.getCellRenderer(row, col);
 	    }
-	    else return super.getCellRenderer(row, col);
 	}
     }
 
@@ -163,6 +170,52 @@ public class PropertyEditor extends JDialog {
 	    return this;
 	}
 
+    }
+
+    class FileTableCellEditor extends AbstractCellEditor implements TableCellEditor {
+
+	private JFileChooser fileChooser;
+	private JPanel panel;
+    private int result;
+
+	public FileTableCellEditor() {
+	    panel = new JPanel();
+	    fileChooser = new JFileChooser();
+	}
+
+	@Override
+	public boolean shouldSelectCell(EventObject av) {
+	    // start editing and tell caller it's OK to edit this cell
+	    fileChooser.setVisible(true);
+	    result = fileChooser.showDialog(panel, "Select");
+	    return true;
+	}
+
+	@Override
+	public void cancelCellEditing() {
+	    // editing is calceled -- hide dialog
+	    fileChooser.setVisible(false);
+	    super.cancelCellEditing();
+	}
+
+	@Override
+	public boolean stopCellEditing() {
+	    // editing is complete -- hide dialog
+	    fileChooser.setVisible(false);
+	    super.stopCellEditing();
+	    return true;
+	}
+
+	public Object getCellEditorValue() {
+	    return fileChooser.getSelectedFile();
+	}
+
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int col) {
+	    // get the current color and store in the dialog in case the user starts
+	    // editing it
+	    fileChooser.setSelectedFile((File) value);
+	    return panel;
+	}
     }
 
     class PropTableModel extends AbstractTableModel {
