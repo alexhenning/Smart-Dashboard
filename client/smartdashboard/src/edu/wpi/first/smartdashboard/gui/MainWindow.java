@@ -35,6 +35,8 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -148,8 +150,7 @@ public class MainWindow extends JFrame implements IStateListener {
 	exitMenu.addActionListener(new ActionListener() {
 
 	    public void actionPerformed(ActionEvent ae) {
-		//TODO: need to also offer to save if necessary
-		System.exit(0);
+		MainWindow.exit();
 	    }
 	});
 	fileMenu.add(exitMenu);
@@ -282,6 +283,11 @@ public class MainWindow extends JFrame implements IStateListener {
 		// Final Preparations
 		setMinimumSize(new Dimension(300, 200));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent we) {
+			    MainWindow.exit();
+			}
+		    });
                 
 		setPreferredSize(new Dimension(prefs.getWidth(), prefs.getHeight()));
 		MainWindow.this.setLocation(prefs.getX(), prefs.getY());
@@ -347,6 +353,26 @@ public class MainWindow extends JFrame implements IStateListener {
 	}
 
     }
+
+    /**
+     * Ask to save, then exit
+     */
+    public static void exit() {
+	int result = JOptionPane.showConfirmDialog(
+			 MainWindow.getInstance().contentPane,
+		         new String[] {"Do you wish to save this layout?"},
+			 "Save before quiting?",
+			 JOptionPane.YES_NO_CANCEL_OPTION,
+			 JOptionPane.WARNING_MESSAGE);
+
+	if (result == JOptionPane.YES_OPTION) {
+	    MainWindow.save();
+	    System.exit(0);
+	} else if (result == JOptionPane.NO_OPTION) {
+	    System.exit(0);
+	}
+    }
+
 
     /**
      * Writes this object's and any containted objects' important state

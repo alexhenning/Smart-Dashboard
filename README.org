@@ -23,12 +23,10 @@ A vertical progress bar that allows you to change it's size, scale and color.
 A field that displays time and that may change the color of the text to alert that a certain amount of time is left. (i.e. turn red at 15 seconds)
 
 * Features to add [0/9]
-** TODO Digital display widget for speed
 ** TODO Support for files in the properties dialog
 ** TODO Support to change the background color
 ** TODO Have VerticalProgressBar automagically handle scaling
 ** TODO Support for checkboxes in the properties dialog
 ** TODO Merge VerticalProgressBar into ProgressBar
-** TODO Ask to save before quiting
 ** TODO Add support for multiple saves
 ** TODO Bold text
