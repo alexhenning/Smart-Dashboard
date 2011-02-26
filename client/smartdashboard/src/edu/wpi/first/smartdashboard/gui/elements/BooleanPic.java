@@ -1,5 +1,6 @@
 package edu.wpi.first.smartdashboard.gui.elements;
 
+import edu.wpi.first.smartdashboard.gui.MainWindow;
 import edu.wpi.first.smartdashboard.util.StatefulDisplayElement;
 import edu.wpi.first.smartdashboard.state.Record;
 import edu.wpi.first.smartdashboard.types.Types;
@@ -30,7 +31,6 @@ public class BooleanPic extends StatefulDisplayElement {
         revalidate();
         repaint();
 	setPreferredSize(new Dimension(100, 100));
-	setBackground(Color.GREEN);
 	loadImages();
 
 	setProperty(statusBackgroundImageTrue, imageTruePath);
@@ -54,6 +54,8 @@ public class BooleanPic extends StatefulDisplayElement {
 	if (imageTrue == null || imageFalse == null) {
 	    loadImages();
 	}
+	g.setColor(MainWindow.bgColor);
+    g.drawRect(0, 0, 5*getWidth(), 5*getHeight());
         g.drawImage(image, 0, 0, null); // see javadoc for more info on the parameters
     }
 

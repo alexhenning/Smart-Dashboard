@@ -24,6 +24,7 @@ import edu.wpi.first.smartdashboard.util.IStateListener;
 import edu.wpi.first.smartdashboard.util.IStateUpdatable;
 import edu.wpi.first.smartdashboard.util.DisplayElement;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -45,6 +46,7 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,11 +59,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import javax.swing.plaf.ColorUIResource;
 
 /**
  *
@@ -83,6 +90,10 @@ public class MainWindow extends JFrame implements IStateListener {
     PropertyEditor propEditor = null;
     JMenu changeToMenu;
     private static MenuListener disableGlassPaneOnMenu;
+
+    public static final Color bgColor = new Color(20, 20, 20),
+	fgColor = Color.WHITE, //new Color(220, 220, 220),
+	highlightBG = new Color(69, 69, 69);
 
     /**
      * Initializes the singleton MainWindow
@@ -155,6 +166,7 @@ public class MainWindow extends JFrame implements IStateListener {
 	});
 	fileMenu.add(exitMenu);
 
+	
         JMenu viewMenu = new JMenu("View");
         viewMenu.addMenuListener(disableGlassPaneOnMenu);
         
@@ -189,7 +201,7 @@ public class MainWindow extends JFrame implements IStateListener {
 		}
 	    });
 	viewMenu.add(addLabelMenu);
-		
+
 	customMenuBar.add(fileMenu);
         customMenuBar.add(viewMenu);
 	return customMenuBar;
@@ -226,7 +238,39 @@ public class MainWindow extends JFrame implements IStateListener {
             
 	    @Override
 	    public void run() {
+
+		Enumeration e = UIManager.getDefaults().keys();
+		while (e.hasMoreElements()) {
+		    Object s = e.nextElement();
+		    System.out.println(s+" --- "+UIManager.get(s));
+		}
+		UIManager.put("Panel.foreground", fgColor);
+		UIManager.put("Panel.background", bgColor);
+		UIManager.put("window", bgColor);
+		UIManager.put("PopupMenu.background", bgColor);
+		UIManager.put("MenuBar.background", bgColor);
+
+		UIManager.put("Label.foreground", fgColor);
+		UIManager.put("Label.background", bgColor);
 		
+		UIManager.put("Menu.foreground", fgColor);
+		UIManager.put("Menu.background", bgColor);
+		UIManager.put("Menu.borderColor", highlightBG);
+		UIManager.put("Menu.selectionForeground", fgColor);
+		UIManager.put("Menu.selectionBackground", highlightBG);
+		
+		UIManager.put("MenuItem.foreground", fgColor);
+		UIManager.put("MenuItem.background", bgColor);
+		UIManager.put("MenuItem.borderColor", highlightBG);
+		UIManager.put("MenuItem.selectionForeground", fgColor);
+		UIManager.put("MenuItem.selectionBackground", highlightBG);
+		
+		UIManager.put("CheckBoxMenuItem.foreground", fgColor);
+		UIManager.put("CheckBoxMenuItem.background", bgColor);
+		UIManager.put("CheckBoxMenuItem.borderColor", highlightBG);
+		UIManager.put("CheckBoxMenuItem.selectionForeground", fgColor);
+		UIManager.put("CheckBoxMenuItem.selectionBackground", highlightBG);
+
 		// create context menu for right-click on DisplayElement
 		popupMenu = new JPopupMenu();
 		JMenuItem propertiesItem = new JMenuItem(new PropertiesItemAction("Properties..."));
@@ -270,6 +314,7 @@ public class MainWindow extends JFrame implements IStateListener {
                     }
                 });
 
+
 		m_elemPanel = new JPanel();
 		m_elemPanel.setLayout(null);
 
@@ -279,6 +324,14 @@ public class MainWindow extends JFrame implements IStateListener {
 
 		menuBar = createMenu();
 		setJMenuBar(menuBar);
+
+		// m_elemPanel.setBackground(bgColor);
+		// m_statusBar.setBackground(bgColor);
+		// menuBar.setBackground(bgColor);
+
+		// m_elemPanel.setForeground(fgColor);
+		// m_statusBar.setForeground(fgColor);
+		// menuBar.setForeground(fgColor);
 
 		// Final Preparations
 		setMinimumSize(new Dimension(300, 200));

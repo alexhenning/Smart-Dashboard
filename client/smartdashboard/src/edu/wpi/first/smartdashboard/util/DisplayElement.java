@@ -18,6 +18,9 @@ public abstract class DisplayElement extends JPanel {
     public DisplayElement() {
         properties = new HashMap<String, Object>();
 
+	// setForeground(MainWindow.fgColor);
+	// setBackground(MainWindow.bgColor);
+
         final DisplayElement thisDisplayElement = this;
         this.addComponentListener(new ComponentListener() {
 
